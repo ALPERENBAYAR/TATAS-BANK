@@ -1,0 +1,102 @@
+﻿@model Bankacilik.Models.CustomerViewModel
+@{
+    ViewData["Title"] = "Müşteri Listesi";
+}
+
+<style>
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(18, 18, 18, 0.95);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table-header {
+        background: rgba(0, 255, 136, 0.1);
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+        .table-header th {
+            padding: 1rem;
+            text-align: left;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+    .table-row {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background 0.3s ease;
+    }
+
+        .table-row:hover {
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .table-row td {
+            padding: 1rem;
+            color: #e0e0e0;
+        }
+
+    .no-customer {
+        background: rgba(255, 75, 75, 0.1);
+        border: 1px solid rgba(255, 75, 75, 0.3);
+        padding: 1.5rem;
+        border-radius: 8px;
+        color: #ff4b4b;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card p-4 p-md-5">
+                <h1 class="dashboard-title text-center mb-5">MÜŞTERİ LİSTESİ</h1>
+
+                @if (Model.Customers != null && Model.Customers.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead class="table-header">
+                                <tr>
+                                    <th>Ad</th>
+                                    <th>Soyad</th>
+                                    <th>E-Posta</th>
+                                    <th>Şube</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var customer in Model.Customers)
+                                {
+                                    <tr class="table-row">
+                                        <td>@customer.CustomerName</td>
+                                        <td>@customer.CustomerSurname</td>
+                                        <td>@customer.CustomerMail</td>
+                                        <td>@customer.BranchName</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="no-customer text-center py-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Kayıtlı müşteri bulunamadı
+                    </div>
+                }
+
+                <div class="text-center mt-4">
+                    <a href="/Employee" class="action-button d-inline-block w-auto px-4">
+                        <i class="fas fa-arrow-left me-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+}

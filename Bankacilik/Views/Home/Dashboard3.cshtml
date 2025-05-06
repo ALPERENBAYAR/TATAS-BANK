@@ -1,0 +1,222 @@
+﻿
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0a0a0a 0%, #2d2d2d 100%);
+            --secondary-gradient: linear-gradient(135deg, #121212 0%, #000000 100%);
+            --accent-color: #00ff88;
+        }
+
+        body {
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        .dashboard-card {
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-left: 4px solid var(--accent-color);
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dashboard-title {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card, .chart-container {
+            background: rgba(25, 25, 25, 0.8);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 1rem;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .stats-label {
+            color: #b0b0b0;
+        }
+
+        .info-title {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-left: 4px solid var(--accent-color);
+            color: #e0e0e0;
+            padding: 0.75rem 1.5rem;
+            display: block;
+            text-align: left;
+            transition: all 0.3s ease-in-out;
+        }
+
+            .action-button:hover {
+                color: var(--accent-color);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            }
+    </style>
+}                <div class="welcome-message mb-4 text-center">
+    Merhaba @Model.ManagerName @Model.ManagerSurname, hesabınıza hoş geldiniz!
+
+</div>
+
+
+        <div class="row text-center mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">42</div>
+                    <div class="stats-label">Toplam Müşteri</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">12</div>
+                    <div class="stats-label">Personel Sayısı</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">5</div>
+                    <div class="stats-label">Şube Sayısı</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">254</div>
+                    <div class="stats-label">Günlük İşlem</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h4 class="info-title">Şube Performansı</h4>
+                    <canvas id="branchPerformanceChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h4 class="info-title">Haftalık İşlemler</h4>
+                    <canvas id="weeklyTransactionsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <a href="@Url.Action("AddEmployeeGet", "Manager")" class="action-button text-decoration-none">
+                    <i class="fas fa-user-plus me-2"></i> Personel Ekle
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="@Url.Action("DeleteEmployeeGet", "Manager")" class="action-button text-decoration-none">
+                    <i class="fas fa-user-minus me-2"></i> Personel Sil
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="@Url.Action("AddBranch", "Manager")" class="action-button text-decoration-none">
+                    <i class="fas fa-building me-2"></i> Şube Ekle
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="@Url.Action("ListEmployee", "Manager")" class="action-button text-decoration-none">
+                    <i class="fas fa-users me-2"></i> Personel Listesi
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="@Url.Action("CreateAccount", "Manager")" class="action-button text-decoration-none">
+                    <i class="fas fa-user-shield me-2"></i> Hesap Oluştur
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="@Url.Action("ChangePassword", "Manager")" class="action-button text-decoration-none">
+                    <i class="fas fa-key me-2"></i> Şifre Değiştir
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="@Url.Action("Login", "Manager")" class="action-button text-decoration-none">
+                    <i class="fas fa-sign-in-alt me-2"></i> Giriş Ekranı
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const branchPerformanceChart = new Chart(document.getElementById('branchPerformanceChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Şube 1', 'Şube 2', 'Şube 3', 'Şube 4'],
+                datasets: [{
+                    label: 'İşlem Sayısı',
+                    data: [120, 90, 75, 105],
+                    backgroundColor: 'rgba(0, 255, 136, 0.6)',
+                    borderColor: 'rgba(0, 255, 136, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#e0e0e0' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    x: {
+                        ticks: { color: '#e0e0e0' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#e0e0e0' } }
+                }
+            }
+        });
+
+        const weeklyTransactionsChart = new Chart(document.getElementById('weeklyTransactionsChart'), {
+            type: 'line',
+            data: {
+                labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+                datasets: [{
+                    label: 'İşlem Sayısı',
+                    data: [34, 48, 40, 60, 75, 50, 30],
+                    borderColor: 'rgba(0, 255, 136, 1)',
+                    backgroundColor: 'rgba(0, 255, 136, 0.2)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#e0e0e0' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    x: {
+                        ticks: { color: '#e0e0e0' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#e0e0e0' } }
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,100 @@
+﻿@model Bankacilik.Models.EmployeeViewModel
+@{
+    ViewData["Title"] = "Çalışan Listesi";
+}
+
+<style>
+    .employee-table-container {
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(12px);
+        padding: 2rem;
+        margin: 2rem auto;
+        overflow-x: auto;
+    }
+
+    .employee-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #e0e0e0;
+    }
+
+        .employee-table thead {
+            background: rgba(0, 255, 136, 0.1);
+            border-bottom: 2px solid #00ff88;
+        }
+
+        .employee-table th {
+            padding: 1rem;
+            text-align: left;
+            color: #00ff88;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .employee-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .employee-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+    .table-title {
+        color: #00ff88;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .no-employee {
+        text-align: center;
+        color: #b0b0b0;
+        padding: 2rem;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="employee-table-container">
+        <h2 class="table-title"><i class="fas fa-users-cog me-2"></i>ÇALIŞAN LİSTESİ</h2>
+
+        <table class="employee-table">
+            <thead>
+                <tr>
+                    <th>AD</th>
+                    <th>SOYAD</th>
+                    <th>E-POSTA</th>
+                    <th>ŞUBE</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.EmployeeList != null && Model.EmployeeList.Any())
+                {
+                    foreach (var emp in Model.EmployeeList)
+                    {
+                        <tr>
+                            <td>@emp.EmployeeName</td>
+                            <td>@emp.EmployeeSurname</td>
+                            <td>@emp.EmployeeMail</td>
+                            <td>@emp.BranchName</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="no-employee">
+                            <i class="fas fa-user-slash me-2"></i>Kayıtlı çalışan bulunamadı
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+}

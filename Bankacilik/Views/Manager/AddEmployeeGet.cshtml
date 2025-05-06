@@ -1,0 +1,149 @@
+﻿@model Bankacilik.Models.EmployeeViewModel
+@{
+    ViewData["Title"] = "Personel Ekle";
+}
+
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid #00ff88;
+        border-radius: 8px;
+        backdrop-filter: blur(12px);
+    }
+
+    .form-label {
+        color: #b0b0b0;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+        background: rgba(30, 30, 30, 0.9) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .form-input:focus {
+            border-color: #00ff88 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0,255,136,0.25);
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border: none;
+        border-left: 4px solid #00ff88;
+        color: #e0e0e0;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+        .submit-btn:hover {
+            color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+        }
+
+    .alert-message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+    }
+
+    .alert-error {
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    .select-arrow {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e0e0e0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="form-container">
+        <h2 style="color: #00ff88; margin-bottom: 2rem; text-align: center;">YENİ ÇALIŞAN EKLE</h2>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert-message alert-success">@ViewBag.SuccessMessage</div>
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert-message alert-error">@ViewBag.ErrorMessage</div>
+        }
+
+        <form method="post" asp-action="AddEmployeePost" asp-controller="Manager">
+            <div class="form-group">
+                <label class="form-label" asp-for="EmployeeName">Personel Adı</label>
+                <input asp-for="EmployeeName" class="form-input" placeholder="Personel adı" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="EmployeeSurname">Personel Soyadı</label>
+                <input asp-for="EmployeeSurname" class="form-input" placeholder="Personel soyadı" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="EmployeeMail">Personel E-Mail</label>
+                <input asp-for="EmployeeMail" class="form-input" type="email" placeholder="ornek@tatasbank.com" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="EmployeePassword">Şifre</label>
+                <input asp-for="EmployeePassword" class="form-input" type="password" placeholder="••••••••" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="BranchId">Şube Seçiniz</label>
+                <select asp-for="BranchId" class="form-input select-arrow" required>
+                    <option value="">-- Şube Seçiniz --</option>
+                    @foreach (var branch in Model.Branches)
+                    {
+                        <option value="@branch.BranchId">@branch.BranchName - @branch.BranchCity</option>
+                    }
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-user-plus me-2"></i> ÇALIŞANI KAYDET
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Select elementi özelleştirmesi
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.borderColor = '#00ff88';
+                this.style.boxShadow = '0 0 0 0.25rem rgba(0,255,136,0.25)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.style.borderColor = 'rgba(255,255,255,0.2)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+}

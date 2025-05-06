@@ -1,0 +1,179 @@
+﻿@model Bankacilik.Models.TransferViewModel
+@{
+    ViewData["Title"] = "FAST/EFT İşlemi";
+}
+
+<style>
+    .fast-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid #a855f7;
+        border-radius: 8px;
+        backdrop-filter: blur(12px);
+    }
+
+    .form-label {
+        color: #b0b0b0;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+        background: rgba(30, 30, 30, 0.9) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .form-input:focus {
+            border-color: #a855f7 !important;
+            box-shadow: 0 0 0 0.25rem rgba(168,85,247,0.25);
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #2d0a4d 0%, #4d1a7c 100%);
+        border: none;
+        border-left: 4px solid #a855f7;
+        color: #e0e0e0;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+        .submit-btn:hover {
+            color: #a855f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(168,85,247,0.2);
+        }
+
+    .alert-message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+    }
+
+    .alert-error {
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    .info-note {
+        color: #b0b0b0;
+        font-size: 0.9rem;
+        margin-top: -1rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="fast-container">
+        <h2 style="color: #a855f7; margin-bottom: 2rem; text-align: center;">
+            <i class="fas fa-rocket me-2"></i>FAST/EFT İŞLEMİ
+        </h2>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert-message alert-success">@ViewBag.SuccessMessage</div>
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert-message alert-error">@ViewBag.ErrorMessage</div>
+        }
+
+        <form asp-action="TransferEft" method="post" id="fastForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Gönderen Hesap</label>
+                <input asp-for="FromAccount"
+                       class="form-input"
+                       placeholder="Hesap No"
+                       required />
+                <span asp-validation-for="FromAccount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Alıcı Banka</label>
+                <select class="form-input" required>
+                    <option value="">Banka Seçiniz</option>
+                    <option>Ziraat Bankası</option>
+                    <option>Garanti BBVA</option>
+                    <option>İş Bankası</option>
+                    <option>Yapı Kredi</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Transfer Tutarı (₺)</label>
+                <input asp-for="Amount"
+                       class="form-input"
+                       type="number"
+                       step="0.01"
+                       placeholder="Örn: 1500.00"
+                       required />
+                <span asp-validation-for="Amount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">İşlem Ücreti (₺)</label>
+                <input asp-for="TransactionFee"
+                       class="form-input"
+                       type="number"
+                       step="0.01"
+                       placeholder="Otomatik hesaplanır"
+                       readonly />
+                <div class="info-note">* FAST işlem ücreti gönderimin %1'i dir'</div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane me-2"></i>HAVALE GERÇEKLEŞTİR
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // IBAN formatlama (boşlukları sil)
+        document.getElementById('FromAccount').addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^\dA-Z]/gi, '') // Boşlukları ve diğer özel karakterleri sil
+                .toUpperCase() // Harfleri büyük yap
+                .substring(0, 29); // Maksimum 29 karaktere kadar al
+        });
+
+        // İşlem ücreti hesapla (%1)
+        document.getElementById('Amount').addEventListener('input', function () {
+            const amount = parseFloat(this.value) || 0;
+            const fee = amount * 0.01;
+            document.getElementById('TransactionFee').value = fee.toFixed(2);
+        });
+
+
+        // Alert otomatik kapatma
+        setTimeout(function () {
+            var alerts = document.querySelectorAll('.alert-message');
+            alerts.forEach(function (alert) {
+                alert.style.display = 'none';
+            });
+        }, 5000);
+    </script>
+}

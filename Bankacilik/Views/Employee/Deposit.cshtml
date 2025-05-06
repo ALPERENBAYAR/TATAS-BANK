@@ -1,0 +1,145 @@
+﻿@model Bankacilik.Models.DepositViewModel
+@{
+    ViewData["Title"] = "Para Yatırma İşlemi";
+}
+
+<style>
+    .deposit-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid #00ff88;
+        border-radius: 8px;
+        backdrop-filter: blur(12px);
+    }
+
+    .form-label {
+        color: #b0b0b0;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+        background: rgba(30, 30, 30, 0.9) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .form-input:focus {
+            border-color: #00ff88 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0,255,136,0.25);
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #0a2d1a 0%, #1a4d2d 100%);
+        border: none;
+        border-left: 4px solid #00ff88;
+        color: #e0e0e0;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+        .submit-btn:hover {
+            color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,255,136,0.2);
+        }
+
+    .alert-message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+    }
+
+    .alert-error {
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="deposit-container">
+        <h2 style="color: #00ff88; margin-bottom: 2rem; text-align: center;">
+            <i class="fas fa-coins me-2"></i>PARA YATIRMA İŞLEMİ
+        </h2>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert-message alert-success">@ViewBag.SuccessMessage</div>
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert-message alert-error">@ViewBag.ErrorMessage</div>
+        }
+
+        <form asp-action="DepositPost" method="post" id="depositForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Hedef Hesap Numarası</label>
+                <input asp-for="ToAccount"
+                       class="form-input"
+                       placeholder="Hesap No"
+                       required />
+                <span asp-validation-for="ToAccount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Yatırılacak Tutar (₺)</label>
+                <input asp-for="Amount"
+                       class="form-input"
+                       type="number"
+                       step="0.01"
+                       placeholder="Örn: 1500.00"
+                       required />
+                <span asp-validation-for="Amount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-hand-holding-usd me-2"></i>YATIRMAYI ONAYLA
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Hesap numarası formatı: Sadece harf ve rakam, boşluk yok
+        document.getElementById('ToAccount').addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 29);
+        });
+
+        // Tutar formatlama: sadece rakam ve nokta kabul edilir, virgül otomatik nokta olur
+        document.getElementById('Amount').addEventListener('input', function (e) {
+            this.value = this.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+        });
+
+        // Alert kutularını otomatik gizle
+        setTimeout(function () {
+            var alerts = document.querySelectorAll('.alert-message');
+            alerts.forEach(function (alert) {
+                alert.style.display = 'none';
+            });
+        }, 5000);
+    </script>
+}

@@ -1,0 +1,227 @@
+﻿@model EntityLayer.Employee
+@{
+    ViewData["Title"] = "Personel Paneli";
+}
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #0a0a0a 0%, #2d2d2d 100%);
+        --secondary-gradient: linear-gradient(135deg, #121212 0%, #000000 100%);
+        --accent-color: #00ff88;
+        --hover-color: #00cc6a;
+    }
+
+    body {
+        background: var(--secondary-gradient);
+        min-height: 100vh;
+    }
+
+    .dashboard-card {
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid var(--accent-color);
+        backdrop-filter: blur(12px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dashboard-title {
+        color: var(--accent-color);
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+
+    .welcome-message {
+        color: #e0e0e0;
+        font-size: 1.2rem;
+    }
+
+    .info-section {
+        background: rgba(30, 30, 30, 0.5);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .info-title {
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .info-label {
+        color: #b0b0b0;
+    }
+
+    .info-value {
+        color: #e0e0e0;
+        font-weight: 500;
+    }
+
+    .action-button {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border-left: 4px solid var(--accent-color);
+        color: #e0e0e0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0.75rem 1.5rem;
+        margin-bottom: 1rem;
+        display: block;
+        width: 100%;
+        text-align: left;
+        text-decoration: none;
+    }
+
+        .action-button:hover {
+            color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+        }
+
+    .stats-card {
+        background: rgba(25, 25, 25, 0.8);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .stats-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent-color);
+    }
+
+    .stats-label {
+        color: #b0b0b0;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card p-4 p-md-5">
+                <h1 class="dashboard-title text-center">PERSONEL PANELİ</h1>
+
+                <div class="welcome-message mb-4 text-center">
+                    Merhaba @Model.EmployeeName @Model.EmployeeSurname, hesabınıza hoş geldiniz!
+                   
+                </div>
+
+                <!-- İstatistik Kartları -->
+                <div class="row mb-4 g-4">
+                    <div class="col-md-4">
+                        <div class="stats-card text-center">
+                            <div class="stats-number">42</div>
+                            <div class="stats-label">Toplam Müşteri</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card text-center">
+                            <div class="stats-number">8</div>
+                            <div class="stats-label">Günlük İşlem</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card text-center">
+                            <div class="stats-number">3</div>
+                            <div class="stats-label">Bekleyen İstekler</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İşlem Grupları -->
+                <div class="row g-4">
+                    <!-- Para İşlemleri -->
+                    <div class="col-md-6">
+                        <div class="info-section">
+                            <h3 class="info-title"><i class="fas fa-money-bill-wave me-2"></i>PARA İŞLEMLERİ</h3>
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("WithdrawMoney", "Employee")" class="action-button">
+                                    <i class="fas fa-money-bill-transfer me-2"></i> Para Çekme
+                                </a>
+                                <a href="@Url.Action("Deposit", "Employee")" class="action-button">
+                                    <i class="fas fa-coins me-2"></i> Para Yatırma
+                                </a>
+                                <a href="@Url.Action("TransferMoney", "Employee")" class="action-button">
+                                    <i class="fas fa-exchange-alt me-2"></i> Havale İşlemleri
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Müşteri İşlemleri -->
+                    <div class="col-md-6">
+                        <div class="info-section">
+                            <h3 class="info-title"><i class="fas fa-users me-2"></i>MÜŞTERİ İŞLEMLERİ</h3>
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("AddCustomer", "Employee")" class="action-button">
+                                    <i class="fas fa-user-plus me-2"></i> Müşteri Ekle
+                                </a>
+                                <a href="@Url.Action("DeleteCustomer", "Employee")" class="action-button">
+                                    <i class="fas fa-user-minus me-2"></i> Müşteri Sil
+                                </a>
+                                <a href="@Url.Action("ListCustomer", "Employee")" class="action-button">
+                                    <i class="fas fa-chart-line me-2"></i> Müşteri Analiz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Diğer İşlemler -->
+                    <div class="col-md-6">
+                        <div class="info-section">
+                            <h3 class="info-title"><i class="fas fa-tools me-2"></i>DİĞER İŞLEMLER</h3>
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("FastTransfer", "Employee")" class="action-button">
+                                    <i class="fas fa-bolt me-2"></i> Fast & Eft İşlemleri
+                                </a>
+                                <!-- DÜZELTİLMİŞ PROFİL AYARLARI BUTONU -->
+                                <a href="@Url.Action("ChangePassword", "Employee")" class="action-button">
+                                    <i class="fas fa-cog me-2"></i> Profil Ayarları
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Raporlar -->
+                    <div class="col-md-6">
+                        <div class="info-section">
+                            <h3 class="info-title"><i class="fas fa-chart-pie me-2"></i>RAPORLAR</h3>
+                            <div class="d-grid gap-2">
+                                <button class="action-button">
+                                    <i class="fas fa-file-invoice me-2"></i> Günlük Rapor
+                                </button>
+                                <button class="action-button">
+                                    <i class="fas fa-chart-bar me-2"></i> Performans Analiz
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script>
+        // Tıklama animasyonu için
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+    </script>
+}

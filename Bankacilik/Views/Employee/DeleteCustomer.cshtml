@@ -1,0 +1,99 @@
+﻿@model Bankacilik.Models.CustomerViewModel
+@{
+    ViewData["Title"] = "Müşteri Sil";
+}
+
+<style>
+    .delete-card {
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid #ff4d4d;
+        backdrop-filter: blur(12px);
+        padding: 2rem;
+        border-radius: 8px;
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    .delete-input {
+        background: rgba(30, 30, 30, 0.9) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .delete-input:focus {
+            border-color: #ff4d4d !important;
+            box-shadow: 0 0 0 0.25rem rgba(255,77,77,0.25);
+        }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #2d0a0a 0%, #4d1a1a 100%);
+        border: none;
+        border-left: 4px solid #ff4d4d;
+        color: #e0e0e0;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+        .delete-btn:hover {
+            color: #ff4d4d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255,77,77,0.2);
+        }
+
+    .alert-message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+    }
+
+    .alert-error {
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="delete-card">
+        <h2 style="color: #ff4d4d; margin-bottom: 2rem; text-align: center;">MÜŞTERİ SİL</h2>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert-message alert-success">@ViewBag.SuccessMessage</div>
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert-message alert-error">@ViewBag.ErrorMessage</div>
+        }
+
+        <form asp-action="DeleteCustomerPost" method="post">
+            <input asp-for="CustomerMail"
+                   class="delete-input"
+                   placeholder="Silinecek müşteri e-posta adresi"
+                   required
+                   type="email" />
+
+            <button type="submit" class="delete-btn">
+                <i class="fas fa-trash-alt me-2"></i> MÜŞTERİYİ SİL
+            </button>
+        </form>
+
+        <div style="margin-top: 2rem; color: #b0b0b0; font-size: 0.9rem; text-align: center;">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Bu işlem geri alınamaz! Lütfen silme işleminden önce bilgileri doğrulayın.
+        </div>
+    </div>
+</div>

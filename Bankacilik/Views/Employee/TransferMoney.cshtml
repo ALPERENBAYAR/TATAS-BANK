@@ -1,0 +1,193 @@
+﻿@model Bankacilik.Models.TransferViewModel
+@{
+    ViewData["Title"] = "Para Transferi";
+}
+
+<style>
+    .transfer-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid #4d7cff;
+        border-radius: 8px;
+        backdrop-filter: blur(12px);
+    }
+
+    .form-label {
+        color: #b0b0b0;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+        background: rgba(30, 30, 30, 0.9) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .form-input:focus {
+            border-color: #4d7cff !important;
+            box-shadow: 0 0 0 0.25rem rgba(77,124,255,0.25);
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #0a1a2d 0%, #1a2d4d 100%);
+        border: none;
+        border-left: 4px solid #4d7cff;
+        color: #e0e0e0;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+        .submit-btn:hover {
+            color: #4d7cff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(77,124,255,0.2);
+        }
+
+    .alert-message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+    }
+
+    .alert-error {
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    .info-note {
+        color: #b0b0b0;
+        font-size: 0.9rem;
+        margin-top: -1rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="transfer-container">
+        <h2 style="color: #4d7cff; margin-bottom: 2rem; text-align: center;">
+            <i class="fas fa-exchange-alt me-2"></i>PARA TRANSFERİ
+        </h2>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert-message alert-success">@ViewBag.SuccessMessage</div>
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert-message alert-error">@ViewBag.ErrorMessage</div>
+        }
+
+        <form asp-action="TransferMoneyPost" method="post" id="transferForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Gönderen Hesap</label>
+                <input asp-for="FromAccount"
+                       id="FromAccount"
+                       class="form-input"
+                       placeholder="Hesap No"
+                       required />
+                <span asp-validation-for="FromAccount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Alıcı Hesap</label>
+                <input asp-for="ToAccount"
+                       id="ToAccount"
+                       class="form-input"
+                       placeholder="TRXXXXXXXXXXXX"
+                       required />
+                <span asp-validation-for="ToAccount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Transfer Tutarı (₺)</label>
+                <input asp-for="Amount"
+                       id="Amount"
+                       class="form-input"
+                       type="number"
+                       step="0.01"
+                       placeholder="Örn: 1500.00"
+                       required />
+                <span asp-validation-for="Amount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">İşlem Ücreti (₺)</label>
+                <input asp-for="TransactionFee"
+                       id="TransactionFee"
+                       class="form-input"
+                       type="number"
+                       step="0.01"
+                       placeholder="Otomatik hesaplanır"
+                       readonly />
+                <div class="info-note">* İşlem ücreti tutarın %2'si olarak hesaplanır</div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane me-2"></i>TRANSFERİ TAMAMLA
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        // Giriş anında boşlukları temizle
+        function removeSpaces(input) {
+            input.value = input.value.replace(/\s/g, '');
+        }
+
+        document.getElementById('FromAccount').addEventListener('input', function () {
+            removeSpaces(this);
+        });
+
+        document.getElementById('ToAccount').addEventListener('input', function () {
+            removeSpaces(this);
+        });
+
+        // İşlem ücreti hesapla (%2)
+        document.getElementById('Amount').addEventListener('input', function () {
+            const amount = parseFloat(this.value) || 0;
+            const fee = amount * 0.02;
+            document.getElementById('TransactionFee').value = fee.toFixed(2);
+        });
+
+        // Form gönderiminden önce tekrar boşluk temizliği
+        document.getElementById('transferForm').addEventListener('submit', function () {
+            const from = document.getElementById('FromAccount');
+            const to = document.getElementById('ToAccount');
+            from.value = from.value.replace(/\s/g, '');
+            to.value = to.value.replace(/\s/g, '');
+        });
+
+        // Alert mesajlarını 5 saniyede gizle
+        setTimeout(function () {
+            const alerts = document.querySelectorAll('.alert-message');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.style.display = 'none', 500);
+            });
+        }, 5000);
+    </script>
+}

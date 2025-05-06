@@ -1,0 +1,149 @@
+﻿@model Bankacilik.Models.CustomerViewModel
+@{
+    ViewData["Title"] = "Yeni Müşteri Ekle";
+}
+
+<style>
+    .form-card {
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid #00ff88;
+        backdrop-filter: blur(12px);
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .custom-input {
+        background: rgba(30, 30, 30, 0.9) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .custom-input:focus {
+            border-color: #00ff88 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0,255,136,0.25);
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border: none;
+        border-left: 4px solid #00ff88;
+        color: #e0e0e0;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .submit-btn:hover {
+            color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+        }
+
+    .customer-table {
+        width: 100%;
+        background: rgba(18, 18, 18, 0.95);
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .customer-table th {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .customer-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #e0e0e0;
+        }
+
+        .customer-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+    .alert-message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+    }
+
+    .alert-error {
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="form-card">
+        <h2 style="color: #00ff88; margin-bottom: 2rem;">YENİ MÜŞTERİ EKLE</h2>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert-message alert-success">@ViewBag.SuccessMessage</div>
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert-message alert-error">@ViewBag.ErrorMessage</div>
+        }
+
+        <form asp-action="AddCustomerPost" method="post">
+            <input asp-for="CustomerName" class="custom-input" placeholder="Ad" required />
+            <input asp-for="CustomerSurname" class="custom-input" placeholder="Soyad" required />
+            <input asp-for="CustomerMail" class="custom-input" placeholder="Email" required type="email" />
+            <input asp-for="CustomerPassword" class="custom-input" placeholder="Şifre" required type="password" />
+            <button type="submit" class="submit-btn">MÜŞTERİ EKLE</button>
+        </form>
+    </div>
+
+    <div class="form-card">
+        <h3 style="color: #00ff88; margin-bottom: 1.5rem;">MEVCUT MÜŞTERİLER</h3>
+        <div style="overflow-x: auto;">
+            <table class="customer-table">
+                <thead>
+                    <tr>
+                        <th>AD</th>
+                        <th>SOYAD</th>
+                        <th>E-POSTA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.customers != null && Model.customers.Any())
+                    {
+                        foreach (var customer in Model.customers)
+                        {
+                            <tr>
+                                <td>@customer.CustomerName</td>
+                                <td>@customer.CustomerSurname</td>
+                                <td>@customer.CustomerMail</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #b0b0b0;">
+                                Henüz müşteri eklenmemiş
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

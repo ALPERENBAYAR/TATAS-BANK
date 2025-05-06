@@ -1,0 +1,253 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TATAS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0a0a0a 0%, #2d2d2d 100%);
+            --secondary-gradient: linear-gradient(135deg, #121212 0%, #000000 100%);
+            --accent-color: #00ff88;
+            --gold-accents: #6900ff;
+            --neon-blue: #00b4ff;
+        }
+
+        body {
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+        }
+
+        #introVideoContainer {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100vw;
+            background: black;
+            overflow: hidden;
+            display: none;
+        }
+
+        #introVideo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+
+        #mainContent {
+            display: none;
+        }
+
+        .navbar {
+            background: var(--primary-gradient) !important;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: var(--gold-accents) !important;
+            text-shadow: 0 0 12px rgba(0, 239, 255, 0.3);
+            font-size: 1.8rem;
+        }
+
+        .nav-link {
+            color: rgba(224, 224, 224, 0.8) !important;
+            transition: all 0.3s;
+            position: relative;
+            margin: 0 15px;
+        }
+
+            .nav-link:hover {
+                color: var(--accent-color) !important;
+                transform: translateY(-2px);
+            }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: var(--accent-color);
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+        .auth-card {
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s;
+        }
+
+            .auth-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 16px 48px rgba(0, 255, 136, 0.15);
+            }
+
+        .btn-login {
+            padding: 1.2rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0 !important;
+            border-left: 4px solid;
+        }
+
+            .btn-login::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+                transition: left 0.6s;
+            }
+
+            .btn-login:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px rgba(0, 255, 136, 0.2);
+            }
+
+                .btn-login:hover::before {
+                    left: 100%;
+                }
+
+        .btn-costumer {
+            border-left-color: var(--accent-color);
+        }
+
+        .btn-employe {
+            border-left-color: var(--neon-blue);
+            color: #e0e0e0 !important;
+        }
+
+        .btn-manager {
+            border-left-color: var(--gold-accents);
+        }
+
+        footer {
+            background: var(--primary-gradient) !important;
+            color: #e0e0e0 !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+            footer a {
+                color: var(--accent-color) !important;
+                text-decoration: none;
+                transition: opacity 0.3s ease;
+            }
+
+                footer a:hover {
+                    opacity: 0.8;
+                }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column">
+
+    <!-- Tanıtım Videosu -->
+    <div id="introVideoContainer">
+        <video id="introVideo" autoplay muted>
+            <source src="~/videos/3453320308.mp4" type="video/mp4" />
+            Tarayıcınız video etiketini desteklemiyor.
+        </video>
+    </div>
+
+    <!-- Asıl İçerik -->
+    <div id="mainContent" class="flex-grow-1">
+        <div class="container">
+            <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+                <div class="col-12 col-md-8 col-lg-6">
+                    <div class="auth-card p-5">
+                        <h2 class="text-center mb-4 fw-bold" style="color: var(--accent-color);">HOŞ GELDİNİZ</h2>
+                        <p class="text-center mb-4" style="color: rgba(224, 224, 224, 0.8); letter-spacing: 0.5px;">
+                            Güvenli bankacılık sistemine erişmek için lütfen yetkinizi seçin
+                        </p>
+                        <div class="d-grid gap-3">
+                            <a class="btn btn-login btn-costumer" asp-controller="Customer" asp-action="Login">
+                                Müşteri Girişi
+                            </a>
+                            <a class="btn btn-login btn-employe" asp-controller="Employee" asp-action="Login">
+                                Personel Girişi
+                            </a>
+                            <a class="btn btn-login btn-manager" asp-controller="Manager" asp-action="Login">
+                                Yönetici Girişi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-white text-center py-4">
+            &copy; 2025 TATASBANK - <a asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik Politikası</a>
+        </footer>
+    </div>
+
+    <script>
+        const video = document.getElementById("introVideo");
+        const videoContainer = document.getElementById("introVideoContainer");
+        const mainContent = document.getElementById("mainContent");
+
+        window.addEventListener("DOMContentLoaded", () => {
+            if (sessionStorage.getItem("videoWatched")) {
+                videoContainer.remove();
+                mainContent.style.display = "block";
+            } else {
+                videoContainer.style.display = "block";
+                video.onended = () => {
+                    sessionStorage.setItem("videoWatched", "true");
+                    videoContainer.style.display = "none";
+                    mainContent.style.display = "block";
+                };
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

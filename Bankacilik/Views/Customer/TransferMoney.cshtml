@@ -1,0 +1,204 @@
+﻿@model Bankacilik.Models.TransferViewModel
+@{
+    ViewData["Title"] = "Para Transferi";
+}
+
+<style>
+    .transfer-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid #4d7cff;
+        border-radius: 8px;
+        backdrop-filter: blur(12px);
+    }
+
+    .form-label {
+        color: #b0b0b0;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+        background: rgba(30, 30, 30, 0.9) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .form-input:focus {
+            border-color: #4d7cff !important;
+            box-shadow: 0 0 0 0.25rem rgba(77,124,255,0.25);
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #0a1a2d 0%, #1a2d4d 100%);
+        border: none;
+        border-left: 4px solid #4d7cff;
+        color: #e0e0e0;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+        .submit-btn:hover {
+            color: #4d7cff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(77,124,255,0.2);
+        }
+
+    .alert-message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        color: #00ff88;
+    }
+
+    .alert-error {
+        background: rgba(255, 50, 50, 0.1);
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    .info-note {
+        color: #b0b0b0;
+        font-size: 0.9rem;
+        margin-top: -1rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="transfer-container">
+        <h2 style="color: #4d7cff; margin-bottom: 2rem; text-align: center;">
+            <i class="fas fa-exchange-alt me-2"></i>PARA TRANSFERİ
+        </h2>
+
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert-message alert-success">@ViewBag.SuccessMessage</div>
+        }
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert-message alert-error">@ViewBag.ErrorMessage</div>
+        }
+
+        <form asp-action="TransferMoney" method="post" id="transferForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Gönderen Hesap</label>
+                <input asp-for="FromAccount"
+                       class="form-input"
+                       placeholder="Hesap No"
+                       required />
+                <span asp-validation-for="FromAccount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Alıcı Hesap</label>
+                <input asp-for="ToAccount"
+                       class="form-input"
+                       placeholder="TR XX XXXX XXXX XXXX XXXX XX"
+                       required />
+                <span asp-validation-for="ToAccount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Transfer Tutarı (₺)</label>
+                <input asp-for="Amount"
+                       class="form-input"
+                       type="number"
+                       step="0.01"
+                       placeholder="Örn: 1500.00"
+                       required />
+                <span asp-validation-for="Amount" class="text-danger" style="color: #ff6b6b !important;"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">İşlem Ücreti (₺)</label>
+                <input asp-for="TransactionFee"
+                       class="form-input"
+                       type="number"
+                       step="0.01"
+                       placeholder="Otomatik hesaplanır"
+                       readonly />
+                <div class="info-note">* İşlem ücreti tutarın %1'i olarak hesaplanır</div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane me-2"></i>TRANSFERİ TAMAMLA
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        @@await Html.RenderPartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        // IBAN formatlama (her iki input için)
+        function formatIBAN(input) {
+            input.value = input.value.replace(/[^\dA-Z]/gi, ''); // Sadece sayılar ve harfler kabul
+            input.value = input.value.replace(/(.{4})/g, '$1 '); // 4'erli gruplar
+            input.value = input.value.trim().toUpperCase(); // Temizle ve büyük harfe çevir
+            input.value = input.value.substring(0, 29); // 29 karakterle sınırlı
+        }
+
+        document.getElementById('FromAccount').addEventListener('input', function (e) {
+            formatIBAN(this);
+        });
+
+        document.getElementById('ToAccount').addEventListener('input', function (e) {
+            formatIBAN(this);
+        });
+
+        // Ücret hesaplama
+        document.getElementById('Amount').addEventListener('input', function () {
+            const amount = parseFloat(this.value) || 0;
+            const fee = amount * 0.01; // %1 işlem ücreti
+            document.getElementById('TransactionFee').value = fee.toFixed(2);
+        });
+
+        // Alert otomatik kapatma
+        setTimeout(function () {
+            var alerts = document.querySelectorAll('.alert-message');
+            alerts.forEach(function (alert) {
+                alert.style.display = 'none';
+            });
+        }, 5000);
+
+        // Giriş sırasında boşluk temizleme
+        function removeSpaces(input) {
+            input.value = input.value.replace(/\s/g, '');
+        }
+
+        document.getElementById('FromAccount').addEventListener('input', function () {
+            removeSpaces(this);
+        });
+
+        document.getElementById('ToAccount').addEventListener('input', function () {
+            removeSpaces(this);
+        });
+
+        // Form gönderiminden önce tekrar boşluk temizliği
+        document.getElementById('transferForm').addEventListener('submit', function () {
+            const from = document.getElementById('FromAccount');
+            const to = document.getElementById('ToAccount');
+            from.value = from.value.replace(/\s/g, '');
+            to.value = to.value.replace(/\s/g, '');
+        });
+    </script>
+}

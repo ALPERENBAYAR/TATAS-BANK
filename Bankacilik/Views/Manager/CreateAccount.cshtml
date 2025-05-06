@@ -1,0 +1,242 @@
+﻿@model Bankacilik.Models.AccountViewModel
+@{
+    ViewData["Title"] = "Hesap Oluştur";
+}
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #0a0a0a 0%, #2d2d2d 100%);
+        --secondary-gradient: linear-gradient(135deg, #121212 0%, #000000 100%);
+        --accent-color: #00ff88;
+        --hover-color: #00cc6a;
+    }
+
+    .dashboard-card {
+        background: rgba(18, 18, 18, 0.95);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 4px solid var(--accent-color);
+        backdrop-filter: blur(12px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .account-form {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-section {
+        background: rgba(30, 30, 30, 0.5);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .form-label {
+        color: var(--accent-color);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-input {
+        background: rgba(40, 40, 40, 0.7);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-left: 3px solid var(--accent-color);
+        color: #e0e0e0;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-select {
+        background: rgba(40, 40, 40, 0.7) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%2300ff88' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") no-repeat right 0.75rem center/8px 10px;
+        color: #e0e0e0;
+        appearance: none;
+    }
+
+        .form-select option {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 0.5rem;
+        }
+
+            .form-select option:hover {
+                background: var(--accent-color) !important;
+                color: #1a1a1a !important;
+            }
+
+    .action-button {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+        border: none !important;
+        border-left: 4px solid var(--accent-color) !important;
+        color: #e0e0e0 !important;
+        padding: 0.75rem 1.5rem;
+        margin: 1rem 0;
+        width: 100%;
+        text-align: center;
+        border-radius: 4px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            color: var(--accent-color) !important;
+        }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(18, 18, 18, 0.95);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table-header {
+        background: rgba(0, 255, 136, 0.1);
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+        .table-header th {
+            padding: 1rem;
+            text-align: left;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+    .table-row {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+        .table-row td {
+            padding: 1rem;
+            color: #e0e0e0;
+        }
+
+    .no-account {
+        background: rgba(255, 75, 75, 0.1);
+        border: 1px solid rgba(255, 75, 75, 0.3);
+        padding: 1.5rem;
+        border-radius: 8px;
+        color: #ff4b4b;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card p-4 p-md-5">
+                <h1 class="dashboard-title text-center mb-5">HESAP OLUŞTUR</h1>
+
+                @if (ViewBag.SuccessMessage != null)
+                {
+                    <div class="alert-message alert-success mb-4">
+                        <i class="fas fa-check-circle me-2"></i>@ViewBag.SuccessMessage
+                    </div>
+                }
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert-message alert-danger mb-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>@ViewBag.ErrorMessage
+                    </div>
+                }
+
+                <div class="form-section">
+                    <form asp-action="CreateAccountPost" method="post" class="account-form">
+                        <div class="mb-4">
+                            <label class="form-label">Müşteri E-Posta</label>
+                            <input asp-for="CustomerMail" type="email"
+                                   class="form-input"
+                                   placeholder="örnek@ornek.com"
+                                   required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Şube</label>
+                            <select asp-for="SelectedBranchId"
+                                    asp-items="ViewBag.BranchList"
+                                    class="form-input form-select"
+                                    required>
+                                <option value="">-- Seçiniz --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Banka</label>
+                            <select asp-for="SelectedBankId"
+                                    asp-items="ViewBag.BankList"
+                                    class="form-input form-select"
+                                    required>
+                                <option value="">-- Seçiniz --</option>
+                                <option value="1">Türkiye İş Bankası</option>
+                                <option value="2">Ziraat Bankası</option>
+                                <option value="3">Garanti BBVA</option>
+                                <option value="4">Akbank</option>
+                                <option value="5">Yapı Kredi Bankası</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label">Bakiye</label>
+                            <input asp-for="Balance"
+                                   type="number"
+                                   step="0.01"
+                                   class="form-input"
+                                   required />
+                        </div>
+
+                        <button type="submit" class="action-button">
+                            <i class="fas fa-plus-circle me-2"></i>Hesap Oluştur
+                        </button>
+                    </form>
+                </div>
+
+                <h3 class="dashboard-title mt-5 mb-4">MEVCUT HESAPLAR</h3>
+
+                @if (Model.Accounts != null && Model.Accounts.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead class="table-header">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Bakiye</th>
+                                    <th>Müşteri</th>
+                                    <th>Şube</th>
+                                    <th>Banka</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var acc in Model.Accounts)
+                                {
+                                    <tr class="table-row">
+                                        <td>@acc.AccountNumber</td>
+                                        <td>@acc.Balance.ToString("C")</td>
+                                        <td>@acc.CustomerMail</td>
+                                        <td>@acc.BranchName</td>
+                                        <td>@acc.BankName</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="no-account text-center py-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Henüz oluşturulmuş hesap bulunmamaktadır.
+                    </div>
+                }
+
+                <div class="text-center mt-5">
+                    <a href="/Customer" class="action-button d-inline-block w-auto px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Dashboard'a Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
