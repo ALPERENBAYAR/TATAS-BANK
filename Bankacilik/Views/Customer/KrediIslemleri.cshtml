@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Fatura Ödeme";
+}
+
+<div class="dashboard-card mt-4 p-4 rounded-4 shadow" style="background-color: #111; color: #fff;">
+    <div class="d-flex align-items-center mb-4">
+        <img src="~/images/fatura-icon.png" alt="Fatura İkonu" width="40" height="40" class="me-3" />
+        <h2 class="m-0" style="letter-spacing: 3px;">F A T U R A &nbsp; Ö D E M E</h2>
+    </div>
+
+    <form asp-action="FaturaOdeme" method="post">
+        <div class="mb-3">
+            <label for="firma" class="form-label fw-bold">Fatura Türü</label>
+            <select name="firma" id="firma" class="form-select bg-dark text-light border-0 rounded-3" required>
+                <option value="">-- Seçiniz --</option>
+                <option value="Elektrik">Elektrik</option>
+                <option value="Su">Su</option>
+                <option value="Doğalgaz">Doğalgaz</option>
+                <option value="Telefon">Telefon</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="hesapNo" class="form-label fw-bold">Hesap Numarası</label>
+            <input type="text" id="hesapNo" name="hesapNo" class="form-control bg-dark text-light border-0 rounded-3" placeholder="Hesap numarasını giriniz" required />
+        </div>
+
+        <div class="mb-4">
+            <label for="tutar" class="form-label fw-bold">Tutar (₺)</label>
+            <input type="number" step="0.01" id="tutar" name="tutar" class="form-control bg-dark text-light border-0 rounded-3" placeholder="Ödeme tutarı" required />
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 py-2 rounded-3" style="background-color: #00ff88; border: none; color: #000;">
+            <i class="fas fa-money-bill-wave me-2"></i>Ödemeyi Gerçekleştir
+        </button>
+    </form>
+
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success mt-4 rounded-3">
+            <i class="fas fa-check-circle me-2"></i>@ViewBag.SuccessMessage
+        </div>
+    }
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger mt-4 rounded-3">
+            <i class="fas fa-exclamation-triangle me-2"></i>@ViewBag.ErrorMessage
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(el => el.style.display = 'none');
+        }, 8000);
+    </script>
+}

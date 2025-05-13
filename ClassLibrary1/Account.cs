@@ -19,7 +19,7 @@ namespace EntityLayer
         public int BankId { get; set; }
         public Bank Bank { get; set; }
         public List<Transaction> Transactions { get; set; } = new();
+        public int CustomerId { get; set; }
 
-       
     }
 }

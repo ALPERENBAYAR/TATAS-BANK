@@ -89,5 +89,6 @@ namespace DataAccessLayer.Concrete
         public DbSet<Manager> Managers { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Customer> Customers { get; set; }
+
     }
 }

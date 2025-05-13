@@ -2,7 +2,10 @@
     ViewData["Title"] = "Müşteri Paneli";
 }
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
+    /* Önceki CSS kodları aynı kalacak */
     :root {
         --primary-gradient: linear-gradient(135deg, #0a0a0a 0%, #2d2d2d 100%);
         --secondary-gradient: linear-gradient(135deg, #121212 0%, #000000 100%);
@@ -13,6 +16,8 @@
     body {
         background: var(--secondary-gradient);
         min-height: 100vh;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', system-ui, sans-serif;
     }
 
     .dashboard-card {
@@ -20,18 +25,24 @@
         border: 1px solid rgba(255,255,255,0.1);
         border-left: 4px solid var(--accent-color);
         backdrop-filter: blur(12px);
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 2rem auto;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .dashboard-title {
         color: var(--accent-color);
         font-weight: bold;
+        text-align: center;
         margin-bottom: 2rem;
+        letter-spacing: 2px;
     }
 
     .welcome-message {
-        color: #e0e0e0;
         font-size: 1.2rem;
+        margin-bottom: 2rem;
+        text-align: center;
     }
 
     .info-section {
@@ -46,22 +57,31 @@
         color: var(--accent-color);
         font-size: 1.1rem;
         margin-bottom: 1rem;
+        text-transform: uppercase;
     }
 
     .info-item {
         display: flex;
         justify-content: space-between;
-        padding: 0.5rem 0;
+        padding: 0.75rem 0;
         border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.3s ease;
     }
+
+        .info-item:hover {
+            background: rgba(255,255,255,0.03);
+            transform: translateX(8px);
+        }
 
     .info-label {
         color: #b0b0b0;
+        font-weight: 300;
     }
 
     .info-value {
-        color: #e0e0e0;
-        font-weight: 500;
+        color: var(--accent-color);
+        font-weight: 600;
+        position: relative;
     }
 
     .action-button {
@@ -69,31 +89,75 @@
         border-left: 4px solid var(--accent-color);
         color: #e0e0e0;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        padding: 0.75rem 1.5rem;
+        padding: 1.25rem;
         margin-bottom: 1rem;
         display: block;
         width: 100%;
         text-align: left;
         border: none;
+        border-radius: 8px;
+        font-size: 1rem;
     }
 
         .action-button:hover {
             color: var(--accent-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.25);
+        }
+
+    .loading-dots::after {
+        content: '.';
+        animation: dots 1.5s infinite;
+    }
+
+    @@keyframes dots {
+        0%, 20% {
+            content: '.';
+        }
+
+        40% {
+            content: '..';
+        }
+
+        60% {
+            content: '...';
+        }
+
+        80%, 100% {
+            content: '';
+        }
+    }
+
+    .api-status {
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin: 1rem 0;
+        text-align: center;
+        display: none;
+    }
+
+        .api-status.updated {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--accent-color);
+        }
+
+        .api-status.error {
+            background: rgba(255, 85, 85, 0.1);
+            border: 1px solid #ff5555;
         }
 </style>
 
 <div class="container py-5">
     <div class="row">
         <div class="col-12">
-            <div class="dashboard-card p-4 p-md-5">
-                <h1 class="dashboard-title text-center">A N A S A Y F A </h1>
+            <div class="dashboard-card">
+                <h1 class="dashboard-title">A N A S A Y F A</h1>
 
-				<div class="welcome-message mb-4">
-					Merhaba @Model.CustomerName @Model.CustomerSurname, hesabınıza hoş geldiniz!
+                <div class="welcome-message">
+                    Merhaba @Model.CustomerName @Model.CustomerSurname, hesabınıza hoş geldiniz!
                 </div>
 
+                <!-- Müşteri Bilgileri -->
                 <div class="info-section">
                     <h3 class="info-title">Müşteri Bilgileri</h3>
                     <div class="info-item">
@@ -110,32 +174,163 @@
                     </div>
                 </div>
 
+                <!-- Canlı Piyasa Verileri -->
+                <div class="info-section">
+                    <h3 class="info-title">Anlık Piyasa Değerleri</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">Dolar (USD)</span>
+                                <span class="info-value loading-dots" id="dolarRate"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Euro (EUR)</span>
+                                <span class="info-value loading-dots" id="euroRate"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">Gram Altın</span>
+                                <span class="info-value loading-dots" id="gramAltin"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Çeyrek Altın</span>
+                                <span class="info-value loading-dots" id="ceyrekAltin"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="apiStatus" class="api-status"></div>
+                </div>
+
+                <!-- İşlem Butonları -->
                 <div class="row">
                     <div class="col-md-6">
                         <a href="/Customer/TransferMoney" class="action-button">
-                            <i class="fas fa-exchange-alt me-2"></i> Para Transferi
+                            <i class="fas fa-exchange-alt me-2"></i>Para Transferi
                         </a>
                     </div>
                     <div class="col-md-6">
                         <a href="/Customer/TransferEft" class="action-button">
-                            <i class="fas fa-random me-2"></i> EFT Transferi
+                            <i class="fas fa-random me-2"></i>EFT Transferi
                         </a>
                     </div>
                     <div class="col-md-6">
                         <a href="/Customer/ListAccount" class="action-button">
-                            <i class="fas fa-list-alt me-2"></i> Hesaplarım
+                            <i class="fas fa-list-alt me-2"></i>Hesaplarım
                         </a>
                     </div>
                     <div class="col-md-6">
                         <a href="/Customer/ChangePassword" class="action-button">
-                            <i class="fas fa-key me-2"></i> Şifre Değiştir
+                            <i class="fas fa-key me-2"></i>Şifre Değiştir
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="/Customer/KrediBasvuru" class="action-button">
+                            <i class="fas fa-credit-card me-2"></i>Kredi İşlemleri
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="/Customer/KrediIslemleri" class="action-button">
+                            <i class="fas fa-hand-holding-usd me-2"></i>Fatura Ödeme
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+@section Scripts {
+    <script>
+        // TCMB API Entegrasyonu
+        async function getTCMBData() {
+            const statusEl = document.getElementById('apiStatus');
 
-                @section Scripts {
-                    <script>
-                        // Dashboard için gerekli scriptler buraya eklenebilir
-                    </script>
-                }
+            try {
+                const response = await fetch('/Customer/tcmb-kurlar');
+                const xmlText = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+
+                // Döviz Kurları
+                const getCurrencyValue = (currencyCode, type = 'ForexSelling') => {
+                    return parseFloat(
+                        xmlDoc.querySelector(`Currency[Kod="${currencyCode}"] ${type}`)
+                            .textContent.replace(',', '.')
+                    );
+                };
+
+                // Altın Hesaplama (TCMB'de sadece gram altın var)
+                const gramAltin = getCurrencyValue('GA', 'BanknoteSelling');
+                const ceyrekAltin = gramAltin * 1.754; // Çeyrek hesaplama
+
+                // Formatlama Fonksiyonu
+                const formatPrice = (value) => {
+                    return new Intl.NumberFormat('tr-TR', {
+                        style: 'currency',
+                        currency: 'TRY',
+                        minimumFractionDigits: 2
+                    }).format(value);
+                };
+
+                // DOM Güncelleme
+                document.getElementById('dolarRate').textContent =
+                    formatPrice(getCurrencyValue('USD'));
+
+                document.getElementById('euroRate').textContent =
+                    formatPrice(getCurrencyValue('EUR'));
+
+                document.getElementById('gramAltin').textContent =
+                    formatPrice(gramAltin);
+
+                document.getElementById('ceyrekAltin').textContent =
+                    formatPrice(ceyrekAltin);
+
+                statusEl.className = 'api-status updated';
+                statusEl.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    Son Güncelleme: ${new Date().toLocaleTimeString('tr-TR')}
+                `;
+
+            } catch (error) {
+                console.error('Hata:', error);
+                statusEl.className = 'api-status error';
+                statusEl.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Veri alınamadı: ${error.message}
+                `;
+                loadBackupData();
+            } finally {
+                document.querySelectorAll('.loading-dots').forEach(el => {
+                    el.classList.remove('loading-dots');
+                });
+            }
+        }
+
+        // Yedek Veri Sistemi
+        const backupData = {
+            USD: 38.83,
+            EUR:43.21,
+            GRAM: 4060.00,
+            CEYREK: 6691.00
+        };
+
+        function loadBackupData() {
+            const format = value => new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY'
+            }).format(value);
+
+            document.getElementById('dolarRate').textContent = format(backupData.USD);
+            document.getElementById('euroRate').textContent = format(backupData.EUR);
+            document.getElementById('gramAltin').textContent = format(backupData.GRAM);
+            document.getElementById('ceyrekAltin').textContent = format(backupData.CEYREK);
+        }
+
+        // Sayfa Yüklenme Olayları
+        window.addEventListener('DOMContentLoaded', () => {
+            getTCMBData();
+            setInterval(getTCMBData, 600000); // 10 dakikada bir yenile
+        });
+    </script>
+}
